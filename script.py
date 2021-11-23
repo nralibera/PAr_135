@@ -14,16 +14,23 @@ import subprocess as sb
 #simulate the circuit
 #sb.run(["cd "+circuit_path,"source /opt/source.synopsys"," tmax -s atpg.sh",])
 
+
 #retrieve the right matrix and the list of fault
 fault_list =[]
-fault_file = open("equivalent_fault.txt", "r").readlines()
+equivalent_faults = open("equivalent_fault.txt", "r")
+fault_file = equivalent_faults.readlines()
+equivalent_faults.close()
 
 for fault in fault_file:
     fault_list.append(fault.replace(" ","").replace("\n","")) #delete all spaces in the string
     
 
+#building the right matrix
 right_matrix =[]
-matrix_file = open("c7552.stil", "r").readlines()
+matrix_file_opened = open("c7552.stil", "r")
+matrix_file = matrix_file_opened.readlines()
+matrix_file_opened.close()
+
 ligne = matrix_file[22].replace(" ","")
 right_matrix_file = open("right_matrix.txt","w")
 
@@ -31,17 +38,20 @@ right_matrix_file = open("right_matrix.txt","w")
 for i in range(0, 163, 3):
     ligne = matrix_file[250+i].replace(" ","").replace("H","1").replace("L","0").replace(";","").replace("}","")
     right_matrix.append(ligne[6:].replace("\n",""))
-    print(right_matrix)
-    right_matrix_file.write(ligne[6:]+"\n")
+    right_matrix_file.write(ligne[6:])
 
+right_matrix_file.close()
 
 #**********************Simuling each fault***********************
+open("fault_matrix_file.txt","w").close()
 
-for f in fault_list[0:3]:
+file_name=""
+
+for f in fault_list:
     fault = f.replace("\t","")[3:]
     SA = f[2]
     first_fault = fault.split(";")[0]
-    file_name = "datalog_"+f[0:3].upper()+"_"+fault+".txt"
+    file_name = "datalog_"+f[0:3].upper()+"_"+first_fault+".txt"
     file_name = file_name.replace("/","_")
     simulation_file = open("fault_sim_datalog_diagnosis.sh", "w")
     simulation_file.write("read_netlist CORE65GPSVT_tmax.v -library\n"+ #change fault_sim_datalog_diagnosis.sh to simulate fault
@@ -57,9 +67,11 @@ for f in fault_list[0:3]:
     simulation_file.close()
     
     #linux command to run tetramax
-    sb.run(["cd /home/par137/C7552_example/"],shell=True)
+    sb.run(["cd /home/par137/C7552_example/test2"],shell=True)
     sb.run(["tmax -s fault_sim_datalog_diagnosis.sh"],shell=True)
-    list_of_change = open(file_name).readlines()
+    changes_file = open(file_name,"r")
+    list_of_change =changes_file.readlines()
+    changes_file.close() 
     
     fault_matrix_file = open("fault_matrix_file.txt","a") #file in which the fault's matrix will be saved
     fault_matrix_file.write(fault+ "\t"+ "SA" + SA + "\n")
@@ -81,7 +93,7 @@ for f in fault_list[0:3]:
          N10761, N10762, N10763, N10827, N10837, N10838, N10839, N10840,\
          N10868, N10869, N10870, N10871, N10905, N10906, N10907, N10908,\
          N11333, N11334, N11340, N11342, N241_O".replace(" ","").split(",")
-
+    
 
     for elem in right_matrix:
         fault_dict = dict(zip(list_output,elem)) 
@@ -94,6 +106,7 @@ for f in fault_list[0:3]:
             
         line = list_of_change[index][ i :]
         line = line.split("  ")
+        
         fault_matrix[int(line[0])][line[1]]=int(line[2][12])
         index+=1
     
