@@ -87,6 +87,7 @@ def build_intermittent_fault(right_matrix,matrix_data,label,activation_rate=0.85
             matrix_data=np.concatenate([matrix_data,matrix_copy],axis=2)
     return matrix_data,label
 
+"""
 #Opening the fault_list
 fault_list_file=open("equivalent_fault.txt","r")
 fault_list=fault_list_file.readlines()
@@ -101,9 +102,9 @@ right_matrix_file.close()
 
 #building permanent_fault
 matrix_data,label,list_fault = build_data("fault_matrix_file2.txt")
+
+
 # open("intermittent_fault.txt","w").close()
-
-
 #building intermitent fault
 #file for the intermittent fault
 intermittent_file=open("intermittent_fault2.txt","a")
@@ -111,7 +112,7 @@ intermittent_file=open("intermittent_fault2.txt","a")
 activation_rate = 0.85 #85% des vecteurs de la faute permanente restent intacts le reste est remplacés
 nb_of_intermittent_fault=100
 
-for i in tqdm(range(1366,3608)):
+for i in tqdm(range(0,500)):
     faulty_line=[]
     matrix_copy= np.copy(matrix_data[:,:,i])
     matrix_copy= np.reshape(matrix_copy,(55,108,1))
@@ -136,17 +137,16 @@ for i in tqdm(range(1366,3608)):
     for elem1 in list_of_sample:
         for elem2 in range(len(elem1)):
             matrix_copy[elem1[elem2],:,0] = right_matrix[elem1[elem2],:,0]
-        write_matrix_in_a_file(matrix_copy,fault_list[i],intermittent_file)
-        # label=np.concatenate([label,np.array([i])])
-        # matrix_data=np.concatenate([matrix_data,matrix_copy],axis=2)
+        #write_matrix_in_a_file(matrix_copy,fault_list[i],intermittent_file)
+        label=np.concatenate([label,np.array([i])])
+        matrix_data=np.concatenate([matrix_data,matrix_copy],axis=2)
 
 intermittent_file.close()
 
-
+"""
 
 
 
 """print(len(list_fault))
 print(label)
 print(np.shape(matrix_data))"""
-
