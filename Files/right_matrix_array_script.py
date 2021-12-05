@@ -1,7 +1,7 @@
 import numpy as np
 
 right_matrix =[]
-right_matrix_array=np.zeros((55,109),dtype=bool)
+right_matrix_array=np.zeros((55,108),dtype=bool)
 matrix_file_opened = open("c7552.stil", "r")
 matrix_file = matrix_file_opened.readlines()
 
