@@ -26,7 +26,7 @@ activation_rate = 0.85 #85% des vecteurs de la faute permanente restent intacts 
 nb_of_intermittent_fault=100
 
 
-for i in tqdm(range(matrix_data.shape[2])):
+for i in tqdm(range(matrix_data.shape[2])):#on fait des fautes intermittentes pour chaque classe de fautes
     filename="intermittent_fault_array"+str(i)
     faulty_line=[]
     

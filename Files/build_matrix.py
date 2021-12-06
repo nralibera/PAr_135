@@ -13,7 +13,8 @@ def build_matrix(matrix_line):
     matrix= np.reshape(matrix,(55,108,1))
     return matrix
 
-
+###peut-être qu'il faudrait changer la fonction pour que la matrice
+###soit un tableau de booléen et ainsi qu'on gagne de la place  ? 
 
 """matrix=build_matrix(open("right_matrix.txt","r").readlines(),1)
 print (np.shape(matrix))
