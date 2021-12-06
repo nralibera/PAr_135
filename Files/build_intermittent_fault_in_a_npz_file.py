@@ -64,3 +64,11 @@ for i in tqdm(range(matrix_data.shape[2])):#on fait des fautes intermittentes po
         final_label=np.concatenate([final_label,np.array([i])])
         final_matrix=np.concatenate([final_matrix,matrix_copy],axis=2)
     np.savez_compressed(filename,matrix=final_matrix,label=final_label)
+
+"""
+for each fault the number of intermittent faults that can be generated is :
+    n= number_of_entry_vectors_that_return_a_falt_line 
+    k= number_of_entry_vectors_that_return_a_falt_line * (1-activation_rate)
+    number of intermittent fault matrix that can be generated = n choose k=nCk
+
+"""
