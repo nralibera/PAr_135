@@ -26,26 +26,27 @@ activation_rate = 0.85 #85% des vecteurs de la faute permanente restent intacts 
 nb_of_intermittent_fault=100
 
 
-for i in tqdm(range(matrix_data.shape[2])):#on fait des fautes intermittentes pour chaque classe de fautes
+for i in tqdm(range(matrix_data.shape[2])): #on fait des fautes intermittentes pour chaque classe de fautes
     filename="intermittent_fault_array"+str(i)
     faulty_line=[]
     
     final_matrix = np.copy(matrix_data[:,:,i])
-    final_matrix = np.reshape(final_matrix,(55,108,1))
+    final_matrix = np.reshape(final_matrix,(1,55,108))
     
     final_label = np.array([label[i]])
     
     
     matrix_copy= np.copy(matrix_data[:,:,i])
-    matrix_copy= np.reshape(matrix_copy,(55,108,1))
+    matrix_copy= np.reshape(matrix_copy,(1,55,108))
     
     
     for j in range(matrix_data.shape[0]): #get the faulty lines
         for k in range(108):
-            if  matrix_copy[j,k,0] != right_matrix[j,k,0]:
+            if  matrix_copy[0,j,k] != right_matrix[j,k,0]:
                 faulty_line.append(j)
                 break
-            
+    
+
     #change faulty line
     list_of_sample =[]
     for index in range(nb_of_intermittent_fault):
@@ -57,18 +58,15 @@ for i in tqdm(range(matrix_data.shape[2])):#on fait des fautes intermittentes po
         if sample not in list_of_sample:
             list_of_sample.append(sample) 
 
-    
+
     for elem1 in list_of_sample:
         for elem2 in range(len(elem1)):
-            matrix_copy[elem1[elem2],:,0] = right_matrix[elem1[elem2],:,0]
+            matrix_copy[0,elem1[elem2],:] = right_matrix[elem1[elem2],:,0]
         final_label=np.concatenate([final_label,np.array([i])])
-        final_matrix=np.concatenate([final_matrix,matrix_copy],axis=2)
+        final_matrix=np.concatenate([final_matrix,matrix_copy],axis=0)
+        
+        matrix_copy= np.copy(matrix_data[:,:,i])
+        matrix_copy= np.reshape(matrix_copy,(1,55,108))
+    
+    
     np.savez_compressed(filename,matrix=final_matrix,label=final_label)
-
-"""
-for each fault the number of intermittent faults that can be generated is :
-    n= number_of_entry_vectors_that_return_a_falt_line 
-    k= number_of_entry_vectors_that_return_a_falt_line * (1-activation_rate)
-    number of intermittent fault matrix that can be generated = n choose k=nCk
-
-"""

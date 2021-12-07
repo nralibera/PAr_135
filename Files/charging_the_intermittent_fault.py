@@ -13,7 +13,7 @@ matrix_list =[]
 label_list = []
 for i in tqdm(range(3609)):
     file=np.load("intermittent_fault_array"+str(i)+".npz")
-    matrix_list.append(file['matrix'])
+    matrix_list.append(np.rollaxis(file['matrix'],2,0))
     label_list.append(file['label'])
     
 
