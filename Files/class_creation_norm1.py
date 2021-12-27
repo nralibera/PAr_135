@@ -13,6 +13,19 @@ nb_class=3609
 size_fault_matrix=(55,108)
 
 t1=t.time()
+def sub_bool(a,b):
+    if a :
+        if b :
+            return 0
+        else :
+            return 1
+    else :
+        if b :
+            return 1
+        else :
+            return 0
+
+
 def norme_1(matrix_1,matrix_2):
     distance = 0
     dimensions=np.shape(matrix_1)
@@ -20,9 +33,27 @@ def norme_1(matrix_1,matrix_2):
         return ('Pas la même taille')
     for i in range(dimensions[0]) :
         for j in range(dimensions[1]):
-            distance+=abs(int(matrix_1[i,j])-int(matrix_2[i,j]))
+            distance+=sub_bool(matrix_1[i,j],matrix_2[i,j])
     return distance
 
+def insert_sorted_list_dich(elem,L):
+    a=0
+    b=len(L)
+    x=(a+b)/2
+    if elem[1]>=L[b][1]:
+        L.append(elem)
+        return
+    if elem[1]<=L[a][1]:
+        L=[elem]+L
+        return
+    while not L[x-1][1]<=elem[1]<=L[x][1]:
+       if elem[1]>=L[x][1]:
+           a=x
+           x=(a+b)/2
+       if elem[1]<=L[x][1]:
+           b=x
+           x=(a+b)/2
+    return
 ##regroup all permanent fault in the same matrix --> easier to operate on them
 """
 matrix_file_opened= open('fault_matrix_file2.txt',"r")
