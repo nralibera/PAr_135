@@ -38,21 +38,22 @@ def norme_1(matrix_1,matrix_2):
 
 def insert_sorted_list_dich(elem,L):
     a=0
-    b=len(L)
-    x=(a+b)/2
-    if elem[1]>=L[b][1]:
+    length=len(L)
+    b=length
+    x=(a+b)//2
+    if elem[0]>=L[b-1][0]:
         L.append(elem)
         return
-    if elem[1]<=L[a][1]:
-        L=[elem]+L
-        return
-    while not L[x-1][1]<=elem[1]<=L[x][1]:
-       if elem[1]>=L[x][1]:
-           a=x
-           x=(a+b)/2
-       if elem[1]<=L[x][1]:
+
+    while a!=b:
+       if elem[0]>=L[x][0]:
+           a=x+1
+           x=(a+b)//2
+           
+       else:
            b=x
-           x=(a+b)/2
+           x=(a+b)//2
+    L.insert(a, elem)
     return
 ##regroup all permanent fault in the same matrix --> easier to operate on them
 """
@@ -84,23 +85,31 @@ metaclassnumber=0
 
 matrix_permanents=np.load('permanent_fault.npz')['matrix']
 List_metaclass= {}
+
 for i in tqdm(range(nb_class)): # we create a sorted list of elements
     if not already_classified[i]:
         L_chosen=[]
-        L_chosen.append(i)
         already_classified[i]=True
         metaclassnumber+=1
-        print(metaclassnumber)
+        print(metaclassnumber,i)
         studied_matrix=matrix_permanents[:,:,i]
-        L_dist=[]
+        L_dist=[(0,i)]
+        length_L_dist=1
         for j in range(i,nb_class):
             if not already_classified[j]:
-                L_dist.append((norme_1(studied_matrix,matrix_permanents[:,:,j]),j))
-        L_dist.sort() #a way to improve is to add element at the right place 
+                dist=norme_1(studied_matrix,matrix_permanents[:,:,j])
+                if length_L_dist<=avg_element_per_class :
+                    insert_sorted_list_dich((dist,j),L_dist)
+                    length_L_dist+=1
+                elif length_L_dist>avg_element_per_class and dist<L_dist[-1][0] :
+                    L_dist=L_dist[0:length_L_dist-1]
+                    insert_sorted_list_dich((dist,j),L_dist)
+                
+                #print(L_dist) #a way to improve is to add element at the right place 
         #so the list remain always sorted, (we can use dichotomy to add the dist at the right
-        #place)
+        #place, it's done now : before we added all the distances in L_dist and then sort the list after
 
-        for chosen in range(min(avg_element_per_class-1,len(L_dist))):
+        for chosen in range(min(avg_element_per_class,len(L_dist))):
             L_chosen.append(L_dist[chosen][1])
             already_classified[L_dist[chosen][1]]=True
         List_metaclass["class%s" %metaclassnumber] = L_chosen
@@ -108,6 +117,6 @@ for i in tqdm(range(nb_class)): # we create a sorted list of elements
 
 t2=t.time()
 duration=t2-t1   
-     
+
 #To optimize There is nb_class! distances to calculate then we can sort it ?
-#and the we classify each matrix according to those distances
+#and then we classify each matrix according to those distances
