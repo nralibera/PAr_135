@@ -98,6 +98,7 @@ for i in tqdm(range(nb_class)): # we create a sorted list of elements
         for j in range(i,nb_class):
             if not already_classified[j]:
                 dist=norme_1(studied_matrix,matrix_permanents[:,:,j])
+                #dist=np.linalg(studied_matrix-matrix_permanents[:,:,j])
                 if length_L_dist<=avg_element_per_class :
                     insert_sorted_list_dich((dist,j),L_dist)
                     length_L_dist+=1

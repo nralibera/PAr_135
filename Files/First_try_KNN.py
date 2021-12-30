@@ -45,11 +45,11 @@ def norm_1_KNN(matrix_1,matrix_2):
     
 ###creating training and testing data set
 
-nb_class=6
+nb_class=3609
 size_fault_matrix=(int(55),int(108))
 numb_coeff=int(size_fault_matrix[0]*size_fault_matrix[1])
-rate_train=0.6
-"""
+rate_train=0.8
+
 trainset=[]
 testset=[]
 label=[]
@@ -76,10 +76,10 @@ np.savez_compressed('testset_KNN',matrix=matrix_testset,label=label)
 
 print('datasets are ready')
 
-"""
+
 
 """
-###Allows for less modulation of the training and testing set 
+#Allows for less modulation of the training and testing set 
 #but it is quicker to code, these lines are more like a reminder 
 #that this function exist
 
@@ -89,36 +89,21 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 """
 
 
-"""
-lab = iris.loc[:,"species"]
-iris = pandas.read_csv("iris.csv")
-x = iris.loc[:,"petal_length"]
-y = iris.loc[:,"petal_width"]
-
-for e, c in [('setosa','g'), ('virginica', 'r'), ('versicolor', 'b')]:
-    plt.scatter(x[lab == e], y[lab == e], color = c, label = e)
-
-k = 3
-d = list(zip(x,y)) # Regroupement en couples de coordonnées (x, y)
-model = KNeighborsClassifier(n_neighbors = k)
-model.fit(d, lab)
-prediction = model.predict([[longueur,largeur]])
-"""
-
-#Run only once
 
 trainset=np.load('trainset_KNN.npz')['matrix']
 label=np.load('trainset_KNN.npz')['label']
-model=KNeighborsClassifier(n_neighbors = 3,algorithm='auto',metric=norm_1_KNN)
+model=KNeighborsClassifier(n_neighbors = 5,algorithm='auto')
 model.fit(trainset,label)
-
+print('boring part is over ?')
 X_test=np.load('testset_KNN.npz')['matrix']
 Y_test=np.load('testset_KNN.npz')['label']
 #result=model.predict(X_test)[0:5]
 #true_result=Y_test[0:5]
 test=model.score(X_test,Y_test)
 
-#with only 6 class it took quite some time, 60% training set so approximately 60 
-# training matrix per class --> give a 27% success rate
+#with only 6 class it took quite some time, 80% training set so approximately 80 
+# training matrix per class --> give a 32% success rate
 # plus 1/6 of test matrix were training matrix so normally 16% of test matrix 
 #are already known
+#after test it was because the norm takes too much time to calculate, i don't know why though
+#might have the same effect on the metaclass creation
